@@ -197,34 +197,6 @@
             color: #333;
         }
         
-        /* QR генератор */
-        .qr-container {
-            text-align: center;
-        }
-        
-        #qr-code {
-            margin: 25px 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 200px;
-        }
-        
-        .qr-placeholder {
-            width: 200px;
-            height: 200px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            color: #666;
-            text-align: center;
-            padding: 20px;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        
         /* Таймер */
         .timer-container {
             text-align: center;
@@ -390,26 +362,6 @@
             color: #333;
         }
         
-        .qr-scanner {
-            margin: 20px 0;
-        }
-        
-        #qr-video {
-            width: 100%;
-            max-width: 300px;
-            border-radius: 16px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-        }
-        
-        .scan-result {
-            margin: 20px 0;
-            padding: 15px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            border-radius: 12px;
-            word-break: break-all;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        
         /* Адаптивность */
         @media (max-width: 768px) {
             .container {
@@ -470,7 +422,6 @@
     <div class="nav">
         <button class="nav-btn active" data-section="calculator">🧮 Калькулятор</button>
         <button class="nav-btn" data-section="password">🔐 Пароли</button>
-        <button class="nav-btn" data-section="qr">📱 QR-коды</button>
         <button class="nav-btn" data-section="timer">⏰ Время</button>
         <button class="nav-btn" data-section="tools">🛠️ Инструменты</button>
     </div>
@@ -537,30 +488,6 @@
                         <input type="checkbox" id="symbols" checked>
                     </div>
                 </div>
-            </div>
-        </div>
-        
-        <!-- QR-коды -->
-        <div id="qr" class="section">
-            <h2>QR-коды</h2>
-            <div class="qr-container">
-                <div class="feature-grid">
-                    <div class="feature-card">
-                        <h3>Генератор QR</h3>
-                        <textarea id="qrText" placeholder="Введите текст, URL или любые данные..." rows="3"></textarea>
-                        <button class="btn" onclick="generateQR()">📱 Создать QR-код</button>
-                    </div>
-                    <div class="feature-card">
-                        <h3>Сканер QR</h3>
-                        <button class="btn btn-secondary" onclick="startQRScanner()">📷 Сканировать QR</button>
-                        <div id="qr-scanner" class="qr-scanner" style="display: none;">
-                            <video id="qr-video" autoplay playsinline></video>
-                            <button class="btn btn-danger" onclick="stopQRScanner()">⏹️ Остановить</button>
-                        </div>
-                        <div id="scan-result" class="scan-result" style="display: none;"></div>
-                    </div>
-                </div>
-                <div id="qr-code"></div>
             </div>
         </div>
         
@@ -665,9 +592,6 @@
         </div>
     </div>
 
-<!-- Подключение библиотек QR-кодов -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
-
     <script>
         // Навигация с анимацией
         function showSection(sectionName) {
@@ -701,17 +625,17 @@
             document.getElementById('display').textContent = currentInput;
         }
         
-	function appendNumber(value) {
-    if (waitingForOperand) {
-        // Добавляем число после оператора
-        currentInput = currentInput + value;
-        waitingForOperand = false;
-    } else {
-        if (value === '.' && currentInput.includes('.')) return;
-        currentInput = currentInput === '0' && value !== '.' ? value : currentInput + value;
-    }
-    updateDisplay();
-}
+        function appendNumber(value) {
+            if (waitingForOperand) {
+                // Добавляем число после оператора
+                currentInput = currentInput + value;
+                waitingForOperand = false;
+            } else {
+                if (value === '.' && currentInput.includes('.')) return;
+                currentInput = currentInput === '0' && value !== '.' ? value : currentInput + value;
+            }
+            updateDisplay();
+        }
         
         function clearDisplay() {
             currentInput = '0';
@@ -726,22 +650,22 @@
             updateDisplay();
         }
         
- function setOperator(op) {
-    if (currentInput === 'Ошибка') return;
-    
-    // Показываем операцию на дисплее
-    const displayOp = op === '×' ? '×' : op;
-    currentInput = currentInput + ' ' + displayOp + ' ';
-    updateDisplay();
-    
-    if (previousInput !== null && operator !== null && !waitingForOperand) {
-        calculate();
-    }
-    
-    operator = op === '×' ? '*' : op;
-    previousInput = parseFloat(currentInput.split(' ')[0]);
-    waitingForOperand = true;
-	}
+        function setOperator(op) {
+            if (currentInput === 'Ошибка') return;
+            
+            // Показываем операцию на дисплее
+            const displayOp = op === '×' ? '×' : op;
+            currentInput = currentInput + ' ' + displayOp + ' ';
+            updateDisplay();
+            
+            if (previousInput !== null && operator !== null && !waitingForOperand) {
+                calculate();
+            }
+            
+            operator = op === '×' ? '*' : op;
+            previousInput = parseFloat(currentInput.split(' ')[0]);
+            waitingForOperand = true;
+        }
         
         function calculate() {
             if (operator && previousInput !== null && !waitingForOperand) {
@@ -840,102 +764,6 @@
                     .catch(() => alert('Ошибка копирования'));
             }
         }
-        
-        // QR-КОДЫ
- function generateQR() {
-    const qrText = document.getElementById('qrText').value;
-    const qrCodeDiv = document.getElementById('qr-code');
-    
-    if (!qrText) {
-        alert('Введите текст для QR-кода!');
-        return;
-    }
-    
-    qrCodeDiv.innerHTML = '';
-    
-    // Проверяем доступность библиотеки
-    if (typeof qrcode === 'undefined') {
-        qrCodeDiv.innerHTML = '<div class="qr-placeholder">Библиотека QR-кода не загружена</div>';
-        return;
-    }
-    
-    try {
-        // Создаем QR-код с помощью qrcode-generator
-        const qr = qrcode(0, 'M');
-        qr.addData(qrText);
-        qr.make();
-        
-        // Создаем SVG элемент
-        const size = 200;
-        const cellSize = size / qr.getModuleCount();
-        let svg = `<svg width="${size}" height="${size}" style="border-radius: 16px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);">`;
-        
-        for (let row = 0; row < qr.getModuleCount(); row++) {
-            for (let col = 0; col < qr.getModuleCount(); col++) {
-                if (qr.isDark(row, col)) {
-                    svg += `<rect x="${col * cellSize}" y="${row * cellSize}" width="${cellSize}" height="${cellSize}" fill="#333333"/>`;
-                }
-            }
-        }
-        svg += '</svg>';
-        
-        qrCodeDiv.innerHTML = svg;
-    } catch (error) {
-        qrCodeDiv.innerHTML = '<div class="qr-placeholder">Ошибка создания QR-кода</div>';
-        console.error('QR generation error:', error);
-    }
-}
-
-function startQRScanner() {
-    const scannerDiv = document.getElementById('qr-scanner');
-    const video = document.getElementById('qr-video');
-    const resultDiv = document.getElementById('scan-result');
-    
-    scannerDiv.style.display = 'block';
-    
-    // Проверяем поддержку камеры
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        alert('Камера не поддерживается в этом браузере');
-        stopQRScanner();
-        return;
-    }
-    
-    // Запрашиваем доступ к камере
-    navigator.mediaDevices.getUserMedia({ 
-        video: { 
-            facingMode: 'environment' // Задняя камера
-        } 
-    })
-    .then(stream => {
-        video.srcObject = stream;
-        video.play();
-        
-        // Показываем сообщение о том, что сканирование активно
-        resultDiv.style.display = 'block';
-        resultDiv.innerHTML = '<strong>📷 Наведите камеру на QR-код</strong><br>Сканирование активно...';
-    })
-    .catch(error => {
-        console.error('Camera access error:', error);
-        alert('Ошибка доступа к камере. Убедитесь, что сайт использует HTTPS и разрешен доступ к камере.');
-        stopQRScanner();
-    });
-}
-
-function stopQRScanner() {
-    const video = document.getElementById('qr-video');
-    const scannerDiv = document.getElementById('qr-scanner');
-    const resultDiv = document.getElementById('scan-result');
-    
-    // Останавливаем поток камеры
-    if (video.srcObject) {
-        const tracks = video.srcObject.getTracks();
-        tracks.forEach(track => track.stop());
-        video.srcObject = null;
-    }
-    
-    scannerDiv.style.display = 'none';
-    resultDiv.style.display = 'none';
-}
         
         // ТАЙМЕРЫ
         let stopwatchInterval = null;
@@ -1096,7 +924,6 @@ function stopQRScanner() {
         // Инициализация
         document.addEventListener('DOMContentLoaded', () => {
             updateLengthDisplay();
-            document.getElementById('qr-code').innerHTML = '<div class="qr-placeholder">QR-код появится здесь</div>';
         });
     </script>
 </body>
