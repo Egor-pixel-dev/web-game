@@ -1,61 +1,416 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Калькулятор</title>
+    <title>Livsi | Hub</title>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: Arial; text-align: center; }
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 0;
+            background: #f5f5f5;
+        }
+        
+        .header {
+            background: #333;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .nav-btn {
+            padding: 10px 15px;
+            border: none;
+            background: #f0f0f0;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .nav-btn.active {
+            background: #007bff;
+            color: white;
+        }
+        
+        .nav-btn:hover {
+            background: #e0e0e0;
+        }
+        
+        .nav-btn.active:hover {
+            background: #0056b3;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .section {
+            display: none;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        /* Калькулятор */
         .calculator { 
             display: grid; 
             grid-template-columns: repeat(4, 1fr);
             gap: 10px; 
-            padding: 20px;
         }
-        button { 
+        
+        .calc-btn { 
             padding: 15px; 
             font-size: 18px; 
             border: none; 
             background: #f0f0f0; 
             border-radius: 5px; 
+            cursor: pointer;
+            transition: background 0.2s;
         }
+        
+        .calc-btn:hover {
+            background: #e0e0e0;
+        }
+        
         #display { 
             grid-column: span 4; 
             padding: 15px; 
             font-size: 24px; 
             background: #eee; 
             margin-bottom: 10px;
+            border-radius: 5px;
+            text-align: right;
+        }
+        
+        /* Генератор паролей */
+        .password-container {
+            text-align: center;
+        }
+        
+        .password-output {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 16px;
+            word-break: break-all;
+            border: 2px solid #e0e0e0;
+        }
+        
+        .settings {
+            display: grid;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        /* QR генератор */
+        .qr-container {
+            text-align: center;
+        }
+        
+        #qr-code {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+        }
+        
+        /* Таймер */
+        .timer-container {
+            text-align: center;
+        }
+        
+        .timer-display {
+            font-size: 48px;
+            font-weight: bold;
+            color: #333;
+            margin: 20px 0;
+        }
+        
+        .timer-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        /* 2048 */
+        .game-2048 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            background: #bbada0;
+            padding: 10px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+        
+        .tile, .empty-tile {
+            width: 60px;
+            height: 60px;
+            background: #cdc1b4;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .tile-2 { background: #eee4da; color: #776e65; }
+        .tile-4 { background: #ede0c8; color: #776e65; }
+        .tile-8 { background: #f2b179; color: #f9f6f2; }
+        .tile-16 { background: #f59563; color: #f9f6f2; }
+        .tile-32 { background: #f67c5f; color: #f9f6f2; }
+        .tile-64 { background: #f65e3b; color: #f9f6f2; }
+        
+        .score {
+            text-align: center;
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        
+        /* Змейка */
+        .snake-game {
+            text-align: center;
+        }
+        
+        #snake-canvas {
+            border: 2px solid #333;
+            background: #f0f0f0;
+        }
+        
+        /* Общие стили */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            background: #007bff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #0056b3;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        input[type="range"] {
+            width: 60px;
+        }
+        
+        input[type="checkbox"] {
+            width: auto;
+            margin: 0;
         }
     </style>
 </head>
 <body>
-    <div class="calculator">
-        <div id="display">0</div>
-        <button onclick="append('7')">7</button>
-        <button onclick="append('8')">8</button>
-        <button onclick="append('9')">9</button>
-        <button onclick="append('+')">+</button>
-        <button onclick="append('4')">4</button>
-        <button onclick="append('5')">5</button>
-        <button onclick="append('6')">6</button>
-        <button onclick="append('-')">-</button>
-        <button onclick="append('1')">1</button>
-        <button onclick="append('2')">2</button>
-        <button onclick="append('3')">3</button>
-        <button onclick="append('*')">×</button>
-        <button onclick="append('0')">0</button>
-        <button onclick="append('.')">.</button>
-        <button onclick="calculate()">=</button>
-        <button onclick="clearDisplay()">C</button>
+    <div class="header">
+        <h1>Livsi | Hub</h1>
+        <p>Многофункциональное веб-приложение</p>
+    </div>
+    
+    <div class="nav">
+        <button class="nav-btn active" onclick="showSection('calculator')">🧮 Калькулятор</button>
+        <button class="nav-btn" onclick="showSection('password')">🔐 Пароли</button>
+        <button class="nav-btn" onclick="showSection('qr')">📱 QR-код</button>
+        <button class="nav-btn" onclick="showSection('timer')">⏰ Таймер</button>
+        <button class="nav-btn" onclick="showSection('2048')">🎮 2048</button>
+        <button class="nav-btn" onclick="showSection('snake')">🐍 Змейка</button>
+    </div>
+    
+    <div class="container">
+        <!-- Калькулятор -->
+        <div id="calculator" class="section active">
+            <h2>Калькулятор</h2>
+            <div class="calculator">
+                <div id="display">0</div>
+                <button class="calc-btn" onclick="append('7')">7</button>
+                <button class="calc-btn" onclick="append('8')">8</button>
+                <button class="calc-btn" onclick="append('9')">9</button>
+                <button class="calc-btn" onclick="append('+')">+</button>
+                <button class="calc-btn" onclick="append('4')">4</button>
+                <button class="calc-btn" onclick="append('5')">5</button>
+                <button class="calc-btn" onclick="append('6')">6</button>
+                <button class="calc-btn" onclick="append('-')">-</button>
+                <button class="calc-btn" onclick="append('1')">1</button>
+                <button class="calc-btn" onclick="append('2')">2</button>
+                <button class="calc-btn" onclick="append('3')">3</button>
+                <button class="calc-btn" onclick="append('*')">×</button>
+                <button class="calc-btn" onclick="append('0')">0</button>
+                <button class="calc-btn" onclick="append('.')">.</button>
+                <button class="calc-btn" onclick="calculate()">=</button>
+                <button class="calc-btn" onclick="clearDisplay()">C</button>
+            </div>
+        </div>
+        
+        <!-- Генератор паролей -->
+        <div id="password" class="section">
+            <h2>Генератор паролей</h2>
+            <div class="password-container">
+                <div class="password-output" id="passwordOutput">Нажмите "Генерировать"</div>
+                <button class="btn" onclick="generatePassword()">🔄 Генерировать</button>
+                <button class="btn btn-secondary" onclick="copyPassword()">📋 Копировать</button>
+                
+                <div class="settings">
+                    <div class="setting-item">
+                        <label>Длина:</label>
+                        <input type="range" id="passwordLength" min="4" max="50" value="12" oninput="updateLengthDisplay()">
+                        <span id="lengthDisplay">12</span>
+                    </div>
+                    <div class="setting-item">
+                        <label>Заглавные буквы:</label>
+                        <input type="checkbox" id="uppercase" checked>
+                    </div>
+                    <div class="setting-item">
+                        <label>Строчные буквы:</label>
+                        <input type="checkbox" id="lowercase" checked>
+                    </div>
+                    <div class="setting-item">
+                        <label>Цифры:</label>
+                        <input type="checkbox" id="numbers" checked>
+                    </div>
+                    <div class="setting-item">
+                        <label>Символы:</label>
+                        <input type="checkbox" id="symbols">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- QR генератор -->
+        <div id="qr" class="section">
+            <h2>QR-код генератор</h2>
+            <div class="qr-container">
+                <textarea id="qrText" placeholder="Введите текст для QR-кода..." rows="4"></textarea>
+                <button class="btn" onclick="generateQR()">📱 Создать QR</button>
+                <div id="qr-code"></div>
+            </div>
+        </div>
+        
+        <!-- Таймер -->
+        <div id="timer" class="section">
+            <h2>Таймер Помодоро</h2>
+            <div class="timer-container">
+                <div class="timer-display" id="timerDisplay">25:00</div>
+                <div class="timer-controls">
+                    <button class="btn" onclick="startTimer()">▶️ Старт</button>
+                    <button class="btn btn-secondary" onclick="pauseTimer()">⏸️ Пауза</button>
+                    <button class="btn btn-secondary" onclick="resetTimer()">🔄 Сброс</button>
+                </div>
+                <div style="margin-top: 20px;">
+                    <button class="btn btn-secondary" onclick="setTimer(25)">🍅 Работа (25м)</button>
+                    <button class="btn btn-secondary" onclick="setTimer(5)">☕ Перерыв (5м)</button>
+                    <button class="btn btn-secondary" onclick="setTimer(15)">🛋️ Длинный (15м)</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 2048 -->
+        <div id="2048" class="section">
+            <h2>Игра 2048</h2>
+            <div class="score">Счет: <span id="score2048">0</span></div>
+            <div class="game-2048" id="game2048"></div>
+            <button class="btn" onclick="init2048()">🔄 Новая игра</button>
+            <p style="font-size: 14px; color: #666; text-align: center;">
+                Управление: стрелками ←→↑↓
+            </p>
+        </div>
+        
+        <!-- Змейка -->
+        <div id="snake" class="section">
+            <h2>Змейка</h2>
+            <div class="snake-game">
+                <div>Счет: <span id="snakeScore">0</span></div>
+                <canvas id="snake-canvas" width="300" height="300"></canvas>
+                <div>
+                    <button class="btn" onclick="startSnake()">▶️ Старт</button>
+                    <button class="btn btn-secondary" onclick="pauseSnake()">⏸️ Пауза</button>
+                </div>
+                <p style="font-size: 14px; color: #666;">
+                    Управление: стрелками ←→↑↓
+                </p>
+            </div>
+        </div>
     </div>
 
     <script>
+        // Навигация
+        function showSection(sectionName) {
+            // Скрываем все секции
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Убираем активный класс с кнопок
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Показываем нужную секцию
+            document.getElementById(sectionName).classList.add('active');
+            
+            // Активируем нужную кнопку
+            event.target.classList.add('active');
+        }
+        
+        // КАЛЬКУЛЯТОР
         function append(value) {
             const display = document.getElementById("display");
             display.textContent = display.textContent === "0" ? value : display.textContent + value;
         }
+        
         function clearDisplay() {
             document.getElementById("display").textContent = "0";
         }
+        
         function calculate() {
             const display = document.getElementById("display");
             try {
@@ -64,6 +419,300 @@
                 display.textContent = "Ошибка";
             }
         }
+        
+        // ГЕНЕРАТОР ПАРОЛЕЙ
+        function updateLengthDisplay() {
+            document.getElementById('lengthDisplay').textContent = document.getElementById('passwordLength').value;
+        }
+        
+        function generatePassword() {
+            const length = document.getElementById('passwordLength').value;
+            const uppercase = document.getElementById('uppercase').checked;
+            const lowercase = document.getElementById('lowercase').checked;
+            const numbers = document.getElementById('numbers').checked;
+            const symbols = document.getElementById('symbols').checked;
+            
+            let chars = '';
+            if (uppercase) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            if (lowercase) chars += 'abcdefghijklmnopqrstuvwxyz';
+            if (numbers) chars += '0123456789';
+            if (symbols) chars += '!@#$%^&*()_+-=[]{}|;:,.<>?';
+            
+            if (!chars) {
+                document.getElementById('passwordOutput').textContent = 'Выберите хотя бы один тип символов';
+                return;
+            }
+            
+            let password = '';
+            for (let i = 0; i < length; i++) {
+                password += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            
+            document.getElementById('passwordOutput').textContent = password;
+        }
+        
+        function copyPassword() {
+            const password = document.getElementById('passwordOutput').textContent;
+            if (password && password !== 'Нажмите "Генерировать"') {
+                navigator.clipboard.writeText(password).then(() => {
+                    alert('Пароль скопирован!');
+                });
+            }
+        }
+        
+        // QR ГЕНЕРАТОР (простая реализация)
+        function generateQR() {
+            const text = document.getElementById('qrText').value;
+            if (!text) return;
+            
+            const qrContainer = document.getElementById('qr-code');
+            qrContainer.innerHTML = '';
+            
+            // Создаем простую визуализацию QR-кода
+            const qrDiv = document.createElement('div');
+            qrDiv.style.cssText = `
+                width: 200px;
+                height: 200px;
+                background: white;
+                border: 2px solid #333;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                padding: 20px;
+                box-sizing: border-box;
+                word-break: break-all;
+                font-size: 12px;
+            `;
+            qrDiv.innerHTML = `QR-код для:<br><strong>${text}</strong><br><br><small>Для полноценного QR-кода нужна внешняя библиотека</small>`;
+            qrContainer.appendChild(qrDiv);
+        }
+        
+        // ТАЙМЕР
+        let timerInterval;
+        let timeLeft = 25 * 60; // 25 минут в секундах
+        let isRunning = false;
+        
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timerDisplay').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        function startTimer() {
+            if (!isRunning && timeLeft > 0) {
+                isRunning = true;
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    updateTimerDisplay();
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        isRunning = false;
+                        alert('⏰ Время вышло!');
+                    }
+                }, 1000);
+            }
+        }
+        
+        function pauseTimer() {
+            clearInterval(timerInterval);
+            isRunning = false;
+        }
+        
+        function resetTimer() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            timeLeft = 25 * 60;
+            updateTimerDisplay();
+        }
+        
+        function setTimer(minutes) {
+            clearInterval(timerInterval);
+            isRunning = false;
+            timeLeft = minutes * 60;
+            updateTimerDisplay();
+        }
+        
+        // 2048
+        let board2048 = [];
+        let score2048 = 0;
+        
+        function init2048() {
+            board2048 = Array(4).fill().map(() => Array(4).fill(0));
+            score2048 = 0;
+            document.getElementById('score2048').textContent = score2048;
+            addNewTile();
+            addNewTile();
+            render2048();
+        }
+        
+        function addNewTile() {
+            const emptyCells = [];
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 4; j++) {
+                    if (board2048[i][j] === 0) {
+                        emptyCells.push({i, j});
+                    }
+                }
+            }
+            
+            if (emptyCells.length > 0) {
+                const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+                board2048[randomCell.i][randomCell.j] = Math.random() < 0.9 ? 2 : 4;
+            }
+        }
+        
+        function render2048() {
+            const game = document.getElementById('game2048');
+            game.innerHTML = '';
+            
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 4; j++) {
+                    const tile = document.createElement('div');
+                    const value = board2048[i][j];
+                    
+                    if (value === 0) {
+                        tile.className = 'empty-tile';
+                    } else {
+                        tile.className = `tile tile-${value}`;
+                        tile.textContent = value;
+                    }
+                    
+                    game.appendChild(tile);
+                }
+            }
+        }
+        
+        // Управление 2048
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('2048').classList.contains('active')) {
+                switch(e.key) {
+                    case 'ArrowLeft': move2048('left'); break;
+                    case 'ArrowRight': move2048('right'); break;
+                    case 'ArrowUp': move2048('up'); break;
+                    case 'ArrowDown': move2048('down'); break;
+                }
+            }
+        });
+        
+        function move2048(direction) {
+            // Упрощенная логика движения (базовая реализация)
+            let moved = false;
+            const newBoard = board2048.map(row => [...row]);
+            
+            // Здесь должна быть полная логика 2048, но для демо делаем упрощенную
+            if (direction === 'left') {
+                for (let i = 0; i < 4; i++) {
+                    let row = newBoard[i].filter(cell => cell !== 0);
+                    while (row.length < 4) row.push(0);
+                    if (JSON.stringify(row) !== JSON.stringify(newBoard[i])) moved = true;
+                    newBoard[i] = row;
+                }
+            }
+            
+            if (moved) {
+                board2048 = newBoard;
+                addNewTile();
+                render2048();
+            }
+        }
+        
+        // ЗМЕЙКА
+        let snakeCanvas, snakeCtx;
+        let snake = [{x: 10, y: 10}];
+        let food = {x: 15, y: 15};
+        let dx = 0, dy = 0;
+        let snakeScore = 0;
+        let snakeGame;
+        
+        function initSnake() {
+            snakeCanvas = document.getElementById('snake-canvas');
+            snakeCtx = snakeCanvas.getContext('2d');
+        }
+        
+        function drawSnake() {
+            snakeCtx.fillStyle = '#333';
+            snake.forEach(segment => {
+                snakeCtx.fillRect(segment.x * 10, segment.y * 10, 10, 10);
+            });
+        }
+        
+        function drawFood() {
+            snakeCtx.fillStyle = '#ff0000';
+            snakeCtx.fillRect(food.x * 10, food.y * 10, 10, 10);
+        }
+        
+        function moveSnake() {
+            const head = {x: snake[0].x + dx, y: snake[0].y + dy};
+            snake.unshift(head);
+            
+            if (head.x === food.x && head.y === food.y) {
+                snakeScore += 10;
+                document.getElementById('snakeScore').textContent = snakeScore;
+                generateFood();
+            } else {
+                snake.pop();
+            }
+        }
+        
+        function generateFood() {
+            food = {
+                x: Math.floor(Math.random() * 30),
+                y: Math.floor(Math.random() * 30)
+            };
+        }
+        
+        function gameLoop() {
+            snakeCtx.clearRect(0, 0, snakeCanvas.width, snakeCanvas.height);
+            
+            moveSnake();
+            drawSnake();
+            drawFood();
+            
+            // Проверка столкновений
+            const head = snake[0];
+            if (head.x < 0 || head.x >= 30 || head.y < 0 || head.y >= 30) {
+                clearInterval(snakeGame);
+                alert('Игра окончена! Счет: ' + snakeScore);
+                return;
+            }
+        }
+        
+        function startSnake() {
+            snake = [{x: 10, y: 10}];
+            dx = 0; dy = 0;
+            snakeScore = 0;
+            document.getElementById('snakeScore').textContent = snakeScore;
+            generateFood();
+            
+            if (snakeGame) clearInterval(snakeGame);
+            snakeGame = setInterval(gameLoop, 200);
+        }
+        
+        function pauseSnake() {
+            clearInterval(snakeGame);
+        }
+        
+        // Управление змейкой
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('snake').classList.contains('active')) {
+                switch(e.key) {
+                    case 'ArrowLeft': if (dx === 0) {dx = -1; dy = 0;} break;
+                    case 'ArrowRight': if (dx === 0) {dx = 1; dy = 0;} break;
+                    case 'ArrowUp': if (dy === 0) {dx = 0; dy = -1;} break;
+                    case 'ArrowDown': if (dy === 0) {dx = 0; dy = 1;} break;
+                }
+            }
+        });
+        
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', () => {
+            initSnake();
+            init2048();
+            updateTimerDisplay();
+        });
     </script>
 </body>
 </html>
